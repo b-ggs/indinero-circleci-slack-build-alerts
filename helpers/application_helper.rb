@@ -23,4 +23,25 @@ module ApplicationHelper
     regex = /^(#{important_branch_prefixes.join('|')})\/.+/i
     branch_name =~ regex || branch_name == 'circleci-slack-user-specifc-build-alerts-test'
   end
+
+  def load_failed_builds
+    resp = ''
+    File.open 'failed_builds.txt', 'a+' do |f|
+      f.each_line do |line|
+        resp << line.chomp
+      end
+    end
+    resp.split(',')
+  end
+
+  def update_failed_builds(data, append = false)
+    if append
+      failed_builds = load_failed_builds
+      failed_builds << data
+    end
+    failed_builds = failed_builds.compact.uniq.join(',')
+    File.open 'failed_builds.txt', 'w+' do |f|
+      f.puts failed_builds
+    end
+  end
 end

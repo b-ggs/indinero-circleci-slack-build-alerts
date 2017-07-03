@@ -43,6 +43,7 @@ module SlackHelper
       token: @slack_token,
       channel: slack_recipient,
       text: text,
+      link_names: true,
       attachments: attachments.to_json
     }
   end
