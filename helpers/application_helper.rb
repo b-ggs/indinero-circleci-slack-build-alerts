@@ -3,7 +3,7 @@ require 'logger'
 
 module ApplicationHelper 
   def load_secrets
-    YAML.load_file(File.expand_path '../../secrets.yml', __FILE__)
+    YAML.load_file File.expand_path('../../secrets.yml', __FILE__)
   end
 
   def format_message(message, build_num)
@@ -12,7 +12,7 @@ module ApplicationHelper
 
   def log(message, build_num)
     message = format_message message, build_num
-    File.open 'app.log', 'a+' do |f|
+    File.open File.expand_path('../../app.log', __FILE__), 'a+' do |f|
       f.puts message
     end
     $stderr.puts message
@@ -26,7 +26,7 @@ module ApplicationHelper
 
   def load_failed_builds
     resp = ''
-    File.open 'failed_builds.txt', 'a+' do |f|
+    File.open File.expand_path('../../failed_builds.txt', __FILE__), 'a+' do |f|
       f.each_line do |line|
         resp << line.chomp
       end
@@ -35,12 +35,13 @@ module ApplicationHelper
   end
 
   def update_failed_builds(data, append = false)
+    failed_builds = data
     if append
       failed_builds = load_failed_builds
       failed_builds << data
     end
     failed_builds = failed_builds.compact.uniq.join(',')
-    File.open 'failed_builds.txt', 'w+' do |f|
+    File.open File.expand_path('../../failed_builds.txt', __FILE__), 'w+' do |f|
       f.puts failed_builds
     end
   end

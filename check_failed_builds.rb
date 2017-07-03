@@ -48,21 +48,23 @@ slack_message_fields =
     }
   end
 
-slack_message = {
-  token: @slack_token,
-  channel: @slack_channels['important_builds_notify_channel'],
-  text: '@channel These builds are still failing!',
-  link_names: true,
-  attachments: [
-    {
-      title: 'Failing branches:',
-      fields: slack_message_fields
-    }
-  ].to_json
-}
+if !failed_builds.empty?
+  slack_message = {
+    token: @slack_token,
+    channel: @slack_channels['important_builds_notify_channel'],
+    text: '@channel These builds are still failing!',
+    link_names: true,
+    attachments: [
+      {
+        title: 'Failing branches:',
+        fields: slack_message_fields
+      }
+    ].to_json
+  }
 
-slack_response = send_slack_message slack_message
+  slack_response = send_slack_message slack_message
 
-if !slack_response.ok?
-  log "Message sending failed with error: #{slack_response['error']}", build_num
+  if !slack_response.ok?
+    log "Message sending failed with error: #{slack_response['error']}", build_num
+  end
 end

@@ -19,8 +19,8 @@
 
 # Learn more: http://github.com/javan/whenever
 
-set :output 'cron_log.log'
+set :output, "#{path}/cron_log.log"
 
-every 1.hour do
-  command 'ruby check_failed_builds.rb'
+every 1.minute do
+  command "ruby #{path}/check_failed_builds.rb"
 end
