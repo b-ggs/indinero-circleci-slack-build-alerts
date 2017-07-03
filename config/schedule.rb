@@ -19,8 +19,9 @@
 
 # Learn more: http://github.com/javan/whenever
 
+env :PATH, ENV['PATH']
 set :output, "#{path}/cron_log.log"
 
 every 1.minute do
-  command "ruby #{path}/check_failed_builds.rb"
+  command "cd #{path} && ruby #{path}/check_failed_builds.rb"
 end
