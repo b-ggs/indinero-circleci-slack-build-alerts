@@ -64,7 +64,8 @@ post '/' do
   # Only send failed build notifs for branches whose prefixes listed under important_branch_prefixes to
   # important_builds_notify_channel specified in secrets.yml
   if status != 'success' && is_important_branch(branch)
-    options = { custom_text: "<!channel> The build for #{branch} by #{slack_username} failed." }
+    update_failed_builds branch, true
+    options = { custom_text: "@channel The build for #{branch} by #{slack_username} failed." }
     slack_message = build_slack_message circle_details, @slack_channels['important_builds_notify_channel'], options
     slack_responses << send_slack_message(slack_message)
   end

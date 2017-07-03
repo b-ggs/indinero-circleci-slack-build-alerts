@@ -5,6 +5,7 @@ gem 'sinatra'
 gem 'thin'
 gem 'json'
 gem 'httparty'
+gem 'whenever'
 
 group :test do
   gem 'rspec'
