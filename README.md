@@ -1,3 +1,7 @@
+## This is a fork of [b-ggs/circleci-slack-user-specific-build-alerts](https://github.com/b-ggs/circleci-slack-user-specific-build-alerts) used by inDinero. Check out that repository for the base project.
+
+---
+
 # CircleCI - Slack user-specific build alerts
 
 Get CircleCI build alerts for your own builds on Slack!
