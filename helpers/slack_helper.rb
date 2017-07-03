@@ -3,13 +3,15 @@ require 'httparty'
 SLACK_API_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage'
 
 module SlackHelper
-  def build_slack_message(build_details, slack_username)
-    text = 
+  def build_slack_message(build_details, slack_recipient, options = {})
+    user = options[:slack_username] ? options[:slack_username] << '\'s' : 'your'
+    default_text =
       if build_details[:status] == 'success'
-        'Your build passed!'
+        "#{user.capitalize} build passed!"
       else
-        'There was a problem with your build.'
+        "There was a problem with #{user} build."
       end
+    text = options[:custom_text] || default_text
     attachments = [
       {
         title: 'Build details',
@@ -39,7 +41,7 @@ module SlackHelper
     ]
     {
       token: @slack_token,
-      channel: slack_username,
+      channel: slack_recipient,
       text: text,
       attachments: attachments.to_json
     }

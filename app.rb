@@ -22,7 +22,8 @@ before '/' do
     secrets = load_secrets
     @users = secrets['users']
     @slack_token = secrets['slack_token']
-    if @users.nil? || @users.empty? || @slack_token.nil? || @slack_token.empty?
+    @slack_channels = secrets['slack_channels']
+    if @users.nil? || @users.empty? || @slack_token.nil? || @slack_token.empty? || @slack_channels.nil? || @slack_channels.empty?
       log 'There is a problem with your secrets file.', nil
       halt 400
     end
@@ -35,21 +36,47 @@ post '/' do
 
   build_num = payload['build_num']
   vcs_login = payload['user']['login']
-  slack_username = @users[vcs_login]
-
-  if slack_username.nil?
-    log "User #{vcs_login} has no associated Slack username.", build_num
-    halt 400
-  end
+  status = payload['status']
+  branch = payload['branch']
+  has_slack_username = false
+  slack_username =
+    if @users[vcs_login]
+      has_slack_username = true
+      @users[vcs_login]
+    else
+      vcs_login
+    end
 
   circle_details = build_circle_details payload
-  slack_message = build_slack_message circle_details, slack_username
-  slack_response = send_slack_message slack_message
 
-  if slack_response['ok']
+  slack_responses = []
+
+  # Send via @slackbot only if the person who triggered the build has an associated Slack username in secrets.yml
+  if has_slack_username
+    slack_message = build_slack_message circle_details, slack_username
+    slack_responses << send_slack_message(slack_message)
+  end
+
+  # Always send build notif to default_notify_channel specified in secrets.yml
+  slack_message = build_slack_message circle_details, @slack_channels['default_notify_channel'], slack_username: slack_username
+  slack_responses << send_slack_message(slack_message)
+
+  # Only send failed build notifs for branches whose prefixes listed under important_branch_prefixes to
+  # important_builds_notify_channel specified in secrets.yml
+  if status != 'success' && is_important_branch(branch)
+    options = { custom_text: "<!channel> The build for #{branch} by #{slack_username} failed." }
+    slack_message = build_slack_message circle_details, @slack_channels['important_builds_notify_channel'], options
+    slack_responses << send_slack_message(slack_message)
+  end
+
+  if !slack_responses.map(&:ok?).include? false
     status 200
   else
-    log "Message sending failed with error: #{slack_response['error']}", build_num
+    slack_responses.each do |slack_response|
+      if !slack_response.ok?
+        log "Message sending failed with error: #{slack_response['error']}", build_num
+      end
+    end
     halt 400
   end
 end

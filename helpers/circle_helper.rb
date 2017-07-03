@@ -1,6 +1,12 @@
 module CircleHelper
   def build_circle_details(payload)
-    last_commit = payload['all_commit_details'].last
+    default_commit_details = {
+      'committer_login' => 'unknown',
+      'commit' => 'Unknown',
+      'commit_url' => payload['vcs_url'],
+      'subject' => 'Unknown'
+    }
+    last_commit = payload['all_commit_details'].last || default_commit_details
     {
       status: payload['status'],
       build_num: payload['build_num'],
