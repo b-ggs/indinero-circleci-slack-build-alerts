@@ -29,8 +29,8 @@ COPY Gemfile .
 RUN bundle install --without development test
 
 COPY secrets.yml .
-COPY app.rb .
-COPY check_failed_builds.rb .
+COPY check_builds.rb .
+COPY check_previously_failing_important_branches.rb .
 COPY entrypoint.sh .
 RUN mkdir helpers
 COPY helpers helpers
