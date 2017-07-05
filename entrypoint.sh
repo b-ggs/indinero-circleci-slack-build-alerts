@@ -1,4 +1,4 @@
 #!/bin/bash
 
 service cron start
-bundle exec ruby app.rb
+tail -f ~/app/app.log

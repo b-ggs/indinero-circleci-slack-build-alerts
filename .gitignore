@@ -1,5 +1,6 @@
 secrets.yml
 app.log
 .bundle
-failed_builds.txt
+failed_important_branches.txt
 cron_log.log
+last_checked_build.txt

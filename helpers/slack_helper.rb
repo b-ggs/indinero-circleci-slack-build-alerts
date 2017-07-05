@@ -1,20 +1,29 @@
 require 'httparty'
 
-SLACK_API_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage'
-
 module SlackHelper
+  SLACK_API_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage'
+  SUCCESS_COLOR = '#41AA58'
+  FAIL_COLOR = '#D10C20'
+  RUNNING_COLOR = '#66D3E4'
+  SUCCESS_MESSAGE = 'Your build passed!'
+  NON_SUCCESS_MESSAGE = 'There was a problem with your build.'
+
+  def is_slack_user?(recipient)
+    recipient[0] == '@'
+  end
+
   def build_slack_message(build_details, slack_recipient, options = {})
-    user = options[:slack_username] ? options[:slack_username] << '\'s' : 'your'
-    default_text =
-      if build_details[:status] == 'success'
-        "#{user.capitalize} build passed!"
+    message =
+      case build_details[:status]
+      when 'success'
+        options[:custom_success_message] || SUCCESS_MESSAGE
       else
-        "There was a problem with #{user} build."
+        options[:custom_non_success_message] || NON_SUCCESS_MESSAGE
       end
-    text = options[:custom_text] || default_text
     attachments = [
       {
         title: 'Build details',
+        color: build_details[:status] == 'success' ? SUCCESS_COLOR : FAIL_COLOR,
         fields: [
           {
             title: 'Status',
@@ -42,13 +51,18 @@ module SlackHelper
     {
       token: @slack_token,
       channel: slack_recipient,
-      text: text,
+      text: message,
       link_names: true,
       attachments: attachments.to_json
     }
   end
 
   def send_slack_message(slack_message)
-    HTTParty.post(SLACK_API_POST_MESSAGE_URL, body: slack_message)
+    resp = HTTParty.post(SLACK_API_POST_MESSAGE_URL, body: slack_message)
+    if resp.ok?
+      log LogHelper::DEBUG, "Successfully sent Slack message to #{slack_message[:channel]}"
+    else
+      log LogHelper::ERROR, "Failed to send Slack message with error: #{resp['error']}"
+    end
   end
 end

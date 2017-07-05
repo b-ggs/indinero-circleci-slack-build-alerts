@@ -22,6 +22,10 @@
 env :PATH, ENV['PATH']
 set :output, "#{path}/cron_log.log"
 
+every 1.minute do
+  command "cd #{path} && ruby #{path}/check_builds.rb"
+end
+
 every 30.minutes do
-  command "cd #{path} && ruby #{path}/check_failed_builds.rb"
+  command "cd #{path} && ruby #{path}/check_previously_failing_important_branches.rb"
 end
