@@ -4,9 +4,11 @@ require 'httparty'
 
 require_relative 'helpers/application_helper'
 require_relative 'helpers/slack_helper'
+require_relative 'helpers/log_helper'
 
 include ApplicationHelper
 include SlackHelper
+include LogHelper
 
 def get_last_build_for_branch(branch)
   url = "https://circleci.com/api/v1.1/project/github/jessicamah/indinero/tree/#{branch}?circle-token=#{@circle_token}"

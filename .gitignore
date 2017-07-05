@@ -3,3 +3,4 @@ app.log
 .bundle
 failed_builds.txt
 cron_log.log
+last_checked_build.txt
