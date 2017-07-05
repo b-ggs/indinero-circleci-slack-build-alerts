@@ -36,8 +36,8 @@ RUN mkdir helpers
 COPY helpers helpers
 RUN mkdir config
 COPY config config
+RUN touch app.log
 
-EXPOSE 4567
 RUN whenever -i
 RUN chmod +x entrypoint.sh
 CMD ./entrypoint.sh
