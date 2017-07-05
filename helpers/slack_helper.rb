@@ -2,8 +2,9 @@ require 'httparty'
 
 module SlackHelper
   SLACK_API_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage'
-  GREEN_COLOR = '#41AA58'
-  RED_COLOR = '#D10C20'
+  SUCCESS_COLOR = '#41AA58'
+  FAIL_COLOR = '#D10C20'
+  RUNNING_COLOR = '#66D3E4'
   SUCCESS_MESSAGE = 'Your build passed!'
   NON_SUCCESS_MESSAGE = 'There was a problem with your build.'
 
@@ -13,7 +14,8 @@ module SlackHelper
 
   def build_slack_message(build_details, slack_recipient, options = {})
     message =
-      if build_details[:status] == 'success'
+      case build_details[:status]
+      when 'success'
         options[:custom_success_message] || SUCCESS_MESSAGE
       else
         options[:custom_non_success_message] || NON_SUCCESS_MESSAGE
@@ -21,7 +23,7 @@ module SlackHelper
     attachments = [
       {
         title: 'Build details',
-        color: build_details[:status] == 'success' ? GREEN_COLOR : RED_COLOR,
+        color: build_details[:status] == 'success' ? SUCCESS_COLOR : FAIL_COLOR,
         fields: [
           {
             title: 'Status',

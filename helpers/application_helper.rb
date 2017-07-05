@@ -22,9 +22,9 @@ module ApplicationHelper
     end
   end
 
-  def load_failed_builds
+  def load_failed_important_branches
     resp = ''
-    File.open File.expand_path('../../failed_builds.txt', __FILE__), 'a+' do |f|
+    File.open File.expand_path('../../failed_important_branches.txt', __FILE__), 'a+' do |f|
       f.each_line do |line|
         resp << line.chomp
       end
@@ -32,15 +32,15 @@ module ApplicationHelper
     resp.split(',')
   end
 
-  def update_failed_builds(data, append = false)
-    failed_builds = data
+  def update_failed_important_branches(data, append = false)
+    failed_important_branches = data
     if append
-      failed_builds = load_failed_builds
-      failed_builds << data
+      failed_important_branches = load_failed_important_branches
+      failed_important_branches << data
     end
-    failed_builds = failed_builds.compact.uniq.join(',')
-    File.open File.expand_path('../../failed_builds.txt', __FILE__), 'w+' do |f|
-      f.puts failed_builds
+    failed_important_branches = failed_important_branches.compact.uniq.join(',')
+    File.open File.expand_path('../../failed_important_branches.txt', __FILE__), 'w+' do |f|
+      f.puts failed_important_branches
     end
   end
 

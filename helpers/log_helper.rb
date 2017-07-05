@@ -5,8 +5,8 @@ module LogHelper
 
   def format_message(log_tag, message)
     resp = ''
-    resp << Time.now.to_s << ' - '
-    resp << log_tag << ' - '
+    resp << Time.now.to_s << ' -- '
+    resp << log_tag << ' -- '
     resp << message
     resp
   end

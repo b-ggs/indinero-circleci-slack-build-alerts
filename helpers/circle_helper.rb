@@ -2,6 +2,7 @@ require 'httparty'
 
 module CircleHelper
   CIRCLECI_PROJECT_BASE_URL = 'https://circleci.com/api/v1.1/project/github/jessicamah/indinero'
+  CIRCLECI_PROJECT_BRANCH_BASE_URL = 'https://circleci.com/api/v1.1/project/github/jessicamah/indinero/tree/'
 
   def get_latest_builds(limit = 20)
     options = {
@@ -17,6 +18,22 @@ module CircleHelper
       resp = []
     end
     JSON.parse resp
+  end
+
+  def get_last_build_for_branch(branch)
+    url = CIRCLECI_PROJECT_BRANCH_BASE_URL << branch
+    options = {
+      'circle-token' => @circle_token
+    }
+    resp = HTTParty.get url, query: options
+    if resp.ok?
+      log LogHelper::DEBUG, 'Successfully retrieved branch details from CircleCI'
+    else
+      log LogHelper::ERROR, "Failed to retrieve branch details from CircleCI with error: #{resp['error']}"
+      resp = []
+    end
+    resp = JSON.parse resp
+    resp.first
   end
 
   def build_circle_details(payload)

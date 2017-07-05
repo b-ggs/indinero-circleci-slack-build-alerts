@@ -54,7 +54,7 @@ latest_builds.each do |build|
   # Only send failed build notifs for branches whose prefixes listed under important_branch_prefixes to
   # important_builds_notify_channel specified in secrets.yml
   if status != 'success' && is_important_branch(branch)
-    update_failed_builds branch, true
+    update_failed_important_branches branch, true
     channel = @slack_channels['important_builds_notify_channel']
     options = { custom_non_success_message: "@channel The build for #{branch} by #{slack_username} failed." }
     slack_message = build_slack_message circle_details, channel, options
@@ -66,4 +66,4 @@ if !latest_builds.empty?
   update_last_checked_build_num latest_builds.first['build_num']
 end
 
-log LogHelper::DEBUG, 'End checking new builds'
+log LogHelper::DEBUG, 'End checking for new builds'
