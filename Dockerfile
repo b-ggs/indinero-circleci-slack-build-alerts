@@ -30,6 +30,7 @@ COPY helpers helpers
 RUN mkdir config
 COPY config config
 RUN touch app.log
+RUN echo 'Starting...' >> app.log
 
 RUN whenever -i
 CMD cron && : >> /root/app/app.log && tail -f /root/app/app.log
