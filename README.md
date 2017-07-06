@@ -28,7 +28,11 @@ This sends build alerts directly to the person who initiated the build (via @sla
 
 - Create your own `secrets.yml` file, following the included `secrets.example.yml` file.
 
-- Put your Slack OAuth Access Token under the `slack_token` attribute.
+- Put your Slack OAuth Access Token under `slack_token`.
+
+- Put your CircleCI OAuth Access Token under `circle_token`.
+
+- Add in the appropriate channels under `slack_channels`.
 
 - Populate the `users` field by providing each user's VCS login (GitHub, BitBucket, etc. username) and their Slack @handle.
 
@@ -36,35 +40,15 @@ This sends build alerts directly to the person who initiated the build (via @sla
 
 ### Deploy the app with Docker
 
-- Run `docker build -t circleci-slack-user-specific-build-alerts .`
+- Run `docker build -t indinero-circleci-slack-build-alerts .`
 
-- Run `docker run -p 4567:4567 circleci-slack-user-specific-build-alerts`
-
-- Host the app on your preferred service.
-
-- Test if the app is up by visiting the URL or sending a `GET` request to `/`. It should return `PONG`.
+- Run `docker run indinero-circleci-slack-build-alerts`
 
 ### Deploy the app without Docker
 
 - Run `bundle install`.
 
-- Start the server with `ruby app.rb`.
-
-- Host the app on your preferred service.
-
-- Test if the app is up by visiting the URL or sending a `GET` request to `/`. It should return `PONG`.
-
-### Setting up CircleCI hooks
-
-- Add the following to your `circle.yml`
-
-```
-notify:
-  webhooks:
-    - url: http://your-ip-address:4567
-```
-
-- For more details, check out the [CircleCI docs](https://circleci.com/docs/1.0/configuration/#notify)
+- Make sure the cron service is running on your machine, then add the cron jobs with `whenever -i`.
 
 ## Usage
 
@@ -76,12 +60,6 @@ Provided that you've correctly configured everything above, upon the completion 
 
 - Problems with the app will be logged in `app.log` on the project directory.
 
-- You can check if the app is up by visiting the URL or sending a `GET` request to `/`. It should return `PONG`.
-
-## Testing
-
-Tested using [rspec](http://rspec.info/). To run the tests, just run `bundle exec rspec`.
-
 ## Support
 
-Feel free to send in [issues](https://github.com/b-ggs/circleci-slack-user-specific-build-alerts/issues) and [pull requests](https://github.com/b-ggs/circleci-slack-user-specific-build-alerts/pulls).
+Feel free to send in [issues](https://github.com/b-ggs/indinero-circleci-slack-build-alerts/issues) and [pull requests](https://github.com/b-ggs/indinero-circleci-slack-build-alerts/pulls).
