@@ -36,7 +36,7 @@ log LogHelper::DEBUG, "Found #{latest_builds.count} new builds..."
 latest_builds.each do |build|
   build_num = build['build_num']
   vcs_login = build['user']['login']
-  status = build['status']
+  outcome = build['outcome']
   branch = build['branch']
   slack_username = @users[vcs_login] || vcs_login
 
@@ -59,7 +59,7 @@ latest_builds.each do |build|
 
   # Only send failed build notifs for branches whose prefixes listed under important_branch_prefixes to
   # important_builds_notify_channel specified in secrets.yml
-  if status != 'success' && is_important_branch(branch)
+  if outcome != 'success' && is_important_branch(branch)
     update_failed_important_branches branch, true
     channel = @slack_channels['important_builds_notify_channel']
     options = { custom_non_success_message: "@channel The build for #{branch} by #{slack_username} failed." }

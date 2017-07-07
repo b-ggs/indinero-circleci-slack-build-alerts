@@ -25,7 +25,7 @@ log LogHelper::DEBUG, "Previously failed important branches: #{failed_important_
 
 failed_important_branch_builds = failed_important_branches.map do |branch|
   last_build = get_last_build_for_branch branch
-  if last_build['status'] == 'success'
+  if last_build['outcome'] == 'success'
     nil
   else
     last_build

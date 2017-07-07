@@ -43,10 +43,10 @@ module CircleHelper
       'commit_url' => payload['vcs_url'],
       'subject' => 'Unknown'
     }
-    log LogHelper::INFO, "Build #{payload['build_num']} by #{payload['user']['login']}: #{payload['status']}"
+    log LogHelper::INFO, "Build #{payload['build_num']} by #{payload['user']['login']}: #{payload['outcome']}"
     last_commit = payload['all_commit_details'].last || default_commit_details
     {
-      status: payload['status'],
+      outcome: payload['outcome'],
       build_num: payload['build_num'],
       build_url: payload['build_url'],
       branch: payload['branch'],

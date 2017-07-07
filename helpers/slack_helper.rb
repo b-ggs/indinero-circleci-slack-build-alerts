@@ -12,13 +12,13 @@ module SlackHelper
     recipient[0] == '@'
   end
 
-  def is_success?(status)
-    %w(success fixed).include? status
+  def is_success?(outcome)
+    %w(success fixed).include? outcome
   end
 
   def build_slack_message(build_details, slack_recipient, options = {})
     message =
-      if is_success? build_details[:status]
+      if is_success? build_details[:outcome]
         options[:custom_success_message] || SUCCESS_MESSAGE
       else
         options[:custom_non_success_message] || NON_SUCCESS_MESSAGE
@@ -26,11 +26,11 @@ module SlackHelper
     attachments = [
       {
         title: 'Build details',
-        color: is_success?(build_details[:status]) ? SUCCESS_COLOR : FAIL_COLOR,
+        color: is_success?(build_details[:outcome]) ? SUCCESS_COLOR : FAIL_COLOR,
         fields: [
           {
-            title: 'Status',
-            value: build_details[:status],
+            title: 'Outcome',
+            value: build_details[:outcome],
             short: true
           },
           {
