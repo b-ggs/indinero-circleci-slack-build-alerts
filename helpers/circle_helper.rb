@@ -4,7 +4,7 @@ module CircleHelper
   CIRCLECI_PROJECT_BASE_URL = 'https://circleci.com/api/v1.1/project/github/jessicamah/indinero'
   CIRCLECI_PROJECT_BRANCH_BASE_URL = 'https://circleci.com/api/v1.1/project/github/jessicamah/indinero/tree/'
 
-  def get_latest_builds(limit = 20)
+  def get_latest_builds(limit = 30)
     options = {
       'circle-token' => @circle_token,
       'limit' => limit,
