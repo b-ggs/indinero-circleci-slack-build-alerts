@@ -19,16 +19,19 @@ secrets = load_secrets
 
 log LogHelper::DEBUG, 'Checking for new builds...'
 
+latest_builds = get_latest_builds
 last_checked_build_num = load_last_checked_build_num
 
-if last_checked_build_num == 0
+# Initialize last checked build number if not available
+if last_checked_build_num == -1
   log LogHelper::DEBUG, 'Setting last checked build number to latest build number...'
-  last_checked_build_num = get_latest_builds.first['build_num'].to_i
+  last_checked_build_num = latest_builds.first['build_num'].to_i
   update_last_checked_build_num last_checked_build_num
 end
 
-latest_builds = get_latest_builds.delete_if do |build|
-  last_checked_build_num >= build['build_num'].to_i
+latest_builds.delete_if do |build|
+  older_than_last_checked_build_num = last_checked_build_num >= build['build_num'].to_i
+  older_than_last_checked_build_num
 end
 
 log LogHelper::DEBUG, "Found #{latest_builds.count} new builds..."
