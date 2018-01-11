@@ -4,3 +4,4 @@ app.log
 failed_important_branches.txt
 cron_log.log
 last_checked_build.txt
+last_30_finished_build_nums.txt

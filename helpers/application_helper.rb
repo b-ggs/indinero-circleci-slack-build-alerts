@@ -1,24 +1,26 @@
 require 'yaml'
 
-module ApplicationHelper 
+module ApplicationHelper
   def load_secrets
     YAML.load_file File.expand_path('../../secrets.yml', __FILE__)
   end
 
-  def load_last_checked_build_num
-    resp = ''
-    File.open File.expand_path('../../last_checked_build.txt', __FILE__), 'a+' do |f|
+  def load_last_30_finished_build_nums
+    resp = []
+    File.open File.expand_path('../../last_30_finished_build_nums.txt', __FILE__), 'a+' do |f|
       f.each_line do |line|
-        resp << line.chomp
+        resp.push line.chomp.to_i
       end
     end
-    resp = resp.chomp || 0
-    resp.to_i
+    resp
   end
 
-  def update_last_checked_build_num(data)
-    File.open File.expand_path('../../last_checked_build.txt', __FILE__), 'w+' do |f|
-      f.puts data
+  def update_last_30_finished_build_nums(data)
+    data = data.last(30)
+    File.open File.expand_path('../../last_30_finished_build_nums.txt', __FILE__), 'w+' do |f|
+      data.each do |datum|
+        f.puts datum
+      end
     end
   end
 

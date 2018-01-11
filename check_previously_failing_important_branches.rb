@@ -1,6 +1,3 @@
-# require 'byebug'
-# require 'pry-byebug'
-
 require_relative 'helpers/application_helper'
 require_relative 'helpers/slack_helper'
 require_relative 'helpers/circle_helper'

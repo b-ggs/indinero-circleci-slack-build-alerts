@@ -1,6 +1,3 @@
-# require 'byebug'
-# require 'pry-byebug'
-
 require_relative 'helpers/application_helper'
 require_relative 'helpers/slack_helper'
 require_relative 'helpers/circle_helper'
@@ -20,18 +17,25 @@ secrets = load_secrets
 log LogHelper::DEBUG, 'Checking for new builds...'
 
 latest_builds = get_latest_builds
-last_checked_build_num = load_last_checked_build_num
+last_30_finished_build_nums = load_last_30_finished_build_nums
 
 # Initialize last checked build number if not available
-if last_checked_build_num == -1
-  log LogHelper::DEBUG, 'Setting last checked build number to latest build number...'
-  last_checked_build_num = latest_builds.first['build_num'].to_i
-  update_last_checked_build_num last_checked_build_num
+if last_30_finished_build_nums.empty?
+  log LogHelper::DEBUG, 'Setting last 30 finished build nums to last 30 builds'
+  update_last_30_finished_build_nums latest_builds.map { |build| build['build_num'] }
+  last_30_finished_build_nums = load_last_30_finished_build_nums
 end
 
+# Remove previously finished builds or builds that haven't finished yet
 latest_builds.delete_if do |build|
-  older_than_last_checked_build_num = last_checked_build_num >= build['build_num'].to_i
-  older_than_last_checked_build_num
+  build_num = build['build_num'].to_i
+  lifecycle = build['lifecycle']
+  last_30_finished_build_nums.include?(build_num) ||
+    lifecycle != 'finished'
+end
+
+latest_builds.sort_by! do |build|
+  build['build_num'].to_i
 end
 
 log LogHelper::DEBUG, "Found #{latest_builds.count} new builds..."
@@ -72,7 +76,9 @@ latest_builds.each do |build|
 end
 
 if !latest_builds.empty?
-  update_last_checked_build_num latest_builds.first['build_num']
+  finished_build_nums = last_30_finished_build_nums += latest_builds.map { |build| build['build_num'] }
+  last_30_finished_build_nums = finished_build_nums.uniq.sort.last(30)
+  update_last_30_finished_build_nums last_30_finished_build_nums
 end
 
 log LogHelper::DEBUG, 'End checking for new builds'
