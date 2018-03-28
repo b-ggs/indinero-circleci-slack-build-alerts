@@ -56,13 +56,13 @@ latest_builds.each do |build|
   end
 
   # Always send build notif to default_notify_channel specified in secrets.yml
-  channel = @slack_channels['default_notify_channel']
-  options = {
-    custom_success_message: "#{slack_username}'s build passed!",
-    custom_non_success_message: "There was a problem with #{slack_username}'s build."
-  }
-  slack_message = build_slack_message circle_details, channel, options
-  send_slack_message slack_message
+  # channel = @slack_channels['default_notify_channel']
+  # options = {
+  #   custom_success_message: "#{slack_username}'s build passed!",
+  #   custom_non_success_message: "There was a problem with #{slack_username}'s build."
+  # }
+  # slack_message = build_slack_message circle_details, channel, options
+  # send_slack_message slack_message
 
   # Only send failed build notifs for branches whose prefixes listed under important_branch_prefixes to
   # important_builds_notify_channel specified in secrets.yml
